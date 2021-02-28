@@ -27,7 +27,18 @@ git是一个版本管理工具（VCS version control system）
 
 
 
-## 2、Git初始化
+### 1.3、Git中文件的四种状态
+
+1. Untracked 未跟踪的文件，从未添加至版本库中，因此不参与版本控制
+2. Unmodify 未改动的文件，该文件已添加至版本库中，但未被修改，因此文件与版本库中的完全相同，这个文件有两种去处，一是被修改进入Modified状态，二是`git rm`来移除跟踪的文件，进入Untracked状态
+3. Modified 改动的文件，该文件已添加至版本库中，但被修改，这个文件同样有两种去处，一是执行`git add`来添加到暂存状态，二是`git checkout`用版本库中的版本覆盖现有的改动进入Unmodify状态
+4. Staged 暂存状态，该文件已被添加至暂存状态，需要`git commit`来同步至库中，此时库中的文件又变得与本地文件相同，进入Unmodify状态，或是执行`git reset HEAD`来取消文件的缓存状态，进入Modified状态
+
+
+
+
+
+## 2、Git初始化和操作
 
 ### 2.1、配置
 
@@ -61,7 +72,7 @@ git是一个版本管理工具（VCS version control system）
 
 
 
-### 2.2、创建版本库
+### 2.2、创建版本库并添加、删除和上传
 
 首先进入一个工作目录（cd）中，然后执行`git init`完成版本库的初始化
 
@@ -74,10 +85,11 @@ echo "hello..iamqwq.." > welcome.txt
 执行`git add welcome.txt`来添加到版本库，在此之后还需要再执行一次commit的提交，这对于大部分版本控制系统都是一样的，而在Git中，提交时的提交说明文本是强制要求的，如果添加说明则会自动的打开编辑器要求你在其中输入说明
 
 ```git
+git add welcome.txt
 git commit -m "initialized."
 ```
 
-`-m "info"`选项可以省去让你另输一次说明的时间，下方是Git回执的输出
+`-m "info"`选项可以省去让你另输一次说明的时间，下方是Git回执的输出（命令行中带有颜色，较为清晰明了，建议亲测）
 
 ```git
 $ git commit -m "created by iamqwq"
@@ -93,6 +105,14 @@ $ git commit -m "created by iamqwq"
 > 大家实际操作中看到的ID肯定和这里写的不一样。如果碰巧你的操作显示出了同样的ID，那么我建议您赶紧去买一张彩票。
 
 上节选自Git权威指南（XD）
+
+
+
+##### 在执行`git add FILE/DIR`时发生了什么？为什么需要一次add 一次commit？
+
+Git在你执行`git add FILE/DIR`时将你指定的文件或者目录添加到暂存区中，你可以继续add，这个过程结束之后，执行`git commit`Git才会将文件或者目录上传到本地的仓库
+
+
 
 
 
@@ -147,5 +167,36 @@ no changes added to commit (use "git add" and/or "git commit -a")
    git rev-parse --show-cdup
    ```
 
-   
+
+
+
+
+
+## 3、与GitHub一起使用
+
+### 3.1、ssh公钥
+
+```git
+ssh-keygen -t rsa
+```
+
+执行上述命令可以生成ssh密钥，其分为私钥和公钥，复制公钥进入GitHub进入用户setting中添加公钥
+
+此处`-t rsa`是指密钥生成算法
+
+
+
+### 3.2、远程仓库
+
+在GitHub上创建仓库，并选择ssh加密，仓库名最好与本地仓库同名，完成后在Git中执行：
+
+```git
+git remote add origin xxxxxxx.git
+```
+
+```git
+git push -u origin master
+```
+
+`xxxxxxx.git`是你配置完仓库后看到的链接，上述操作添加了一个远程仓库origin，第一次push的时候需要使用-u选项，这会与远程仓库建立联系
 
